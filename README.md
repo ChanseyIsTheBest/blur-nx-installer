@@ -1,106 +1,113 @@
-# renut_nx_ultimate_installer
+# blur-nx-installer
 
-The web installer for ports made from the ultimate base ([renut_nx_ultimate_base](https://github.com/ChanseyIsTheBest/renut_nx_ultimate_base)).
-A port forks it, edits `game.json` (and the page's colours and `icon.png`), fills `release/` with its NRO, and publishes it
-on GitHub Pages. The page makes the whole Switch package from the player's own copy of the game, in their browser:
+Version 1.0.0, for **blur-nx 1.0.0**: Blur on the Nintendo Switch (homebrew), by ChanseyIsTheBest.
 
-- **The shaders**, from the game's own files, so the NRO carries none of them: the containers in `default.xex` and in
-  the game's files, Renut's translator, DXC, SPIRV-Cross and the base's own Python passes (run unchanged in Pyodide),
-  into `deko3d_glsl.bin`; and optionally every shader variant compiled by uam, the console's compiler, into
-  `deko3d_shaders.bin`, so the game starts with no compile stutters.
-- **LZ4 packing** of the large archives `game.json` names: LZ4 HC level 9 in 256 KB blocks, as `NAME.lz4b`, which the
-  base's SDK reads as `NAME` (port 61). Beautiful Katamari's archives go from 2.1 GB to 0.9 GB.
-- **The zip**, streamed to a download as it is written (it can be bigger than the browser's memory).
+**Open the page: https://chanseyisthebest.github.io/blur-nx-installer/**
 
-The example in this repository is Beautiful Katamari, the base's own game: the base's NRO built with
-`-DBANJO_RENUT_RELEASE_SHADERS=ON`, its 195 shaders (111 in `default.xex`, 84 in the models of `d02.dat`-`d05.dat`).
+This page makes the Switch package from **your own copy** of the game. It runs entirely in your browser: your game files
+are not uploaded, and none of the game's files come with blur-nx.
 
-## Making a port's installer
+## What you need
 
-1. **`game.json`**: the game's title, the port's folder on the SD card (`package`: `switch/<package>/`), the NRO's name,
-   whether the page makes the shaders (`shaders`), which files are packed with LZ4 (`lz4`, case-insensitive regular
-   expressions on paths in the game folder), which are left out (`skip`), which must be there (`needs`), which may be
-   absent from a player's copy (`optional`; see step 4), whether it takes DLC packages (`dlc`, copied whole to
-   `switch/<package>/dlc/`, which the base installs at the first start), and the page's texts.
-2. **The NRO**: build the port with `-DBANJO_RENUT_RELEASE_SHADERS=ON` (no game shader in it). A shader the game makes
-   at runtime (one no game file holds) must stay in the NRO: `tools/make_release.py` stops when the port's shader dump
-   has one that is neither in `default.xex` nor in a record.
-3. **Shaders in the game's files** (if any): write the records, a list of where each container is (file, offset, stored
-   size, coding, and the container's offset, length and SHA-256 in the decoded bytes), with a tool of the port's own
-   (katamari-nx's `tools/katamari_shader_files.py` is the example). The codings are in `lib/sources.js` (`raw`, `zlib`,
-   `cpdb`); a new one goes there.
-4. **The release**:
+- Your **Xbox 360 disc** of Blur as an `.iso` image, or the folder it was extracted to (with `default.xex`, `cache/`,
+  `levels/`, `layer1/` and `Ui/`).
+- Blur's **title update 2**, the last one: its Xbox 360 package (a LIVE file named like `TU_10LC225_...`), the folder
+  that holds it, or the folder it was extracted to (`default.xexp`, `loc.pak`, `gamedata/`, `AvatarAwards`). blur-nx is
+  recompiled from the update's code, so the page asks for it.
+- Optional: the game's **DLC** packages, as the Xbox 360 packages you have (not tested yet).
+- A desktop **Chromium browser** (Chrome, Edge, Brave...) and about 6 GB of free disk space for the download.
+- A Switch that runs homebrew (Atmosphère) with **Sphaira**, and an SD card with about 6 GB free.
 
-   ```bash
-   python tools/make_release.py --port <port root> --nro <NRO> --game <game folder> --records <records.json> --pipeline-list <pipeline_list.bin> --version 1.0.0
-   ```
+## How to use it
 
-   `--pipeline-list` (a console's or Ryujinx's `pipeline_list.bin`) gives `variants.txt`, the variants the page compiles,
-   and ships the list itself (the console prebuilds those pipelines). `--file <src>[:<name>]` adds a release file (a
-   settings file, for example).
+1. Open the page. To run it on your own computer: `python serve.py 8193 .` in this folder, then open
+   http://127.0.0.1:8193/.
+2. **Choose your game**: the disc image (`.iso`) or the extracted folder. The page checks that it is the supported version
+   and that every file is there.
+3. **Add title update 2**: the package, or a folder. The page checks that it is the update blur-nx is made from.
+4. Optional: **add the DLC** packages, or a folder of them.
+5. Press **Create blur-nx.zip**. The page makes the game's shaders for the Switch from your files (with **Compile the
+   shaders** ticked, also compiled for the console, so the game plays without compile stutters), and the zip downloads
+   while it is made; keep the page open until it finishes.
+6. If you have an older blur-nx, delete its `switch/blur-nx/game_root` folder first.
+7. Extract `blur-nx.zip` to the **root of the SD card**. It makes `switch/blur-nx/`.
+8. On the Switch, open **Sphaira**, find Blur, press **X** to open Options and choose **Install Forwarder**, make sure
+   **Address Space** is **39-bit**, choose **Create Forwarder**, then start the game from the **Home Screen**. Start it
+   from the forwarder: that is what gives it four CPU cores.
 
-   The build also records the game's files with their sizes (`game_files`, from `--game`, less what `skip` leaves out).
-   The page refuses a copy missing any of them, or with one of another size, and names what is wrong
-   (`lib/game_check.js`): "data/ (all 1384 files)", "cse/ (12 of 40 files: ...)". So a copy with `default.xex` (and
-   `default.xexp`) and little else is caught when it is chosen, not at the console. The disc's own extras
-   (`$SystemUpdate`, `$TitleUpdate`, `nxeart`, `AvatarAssetPack`) and what `optional` names are never required. For a
-   manifest made before this, add the list with `python tools/game_files.py <game folder>`; check it with
-   `node test/game_check_node.mjs <game folder>`.
+## What goes on the SD card
 
-   Then make the reference shader files and check the whole package:
-
-   ```bash
-   node test/full_node.mjs <game folder> <out.zip> --reference --native-glsl=<port>/out/deko3d_shaders/glsl_opt
-   ```
-
-   ```bash
-   python test/check_zip.py <out.zip> <game folder>
-   ```
-
-5. **The tools**: when the port's shader tools differ from the base's, copy them in with
-   `python tools/sync_from_base.py --base <port root>`, and rebuild `wasm/renut_hlsl` and `wasm/uam` from the port
-   (`BANJO_NX=<port root> bash wasm/src/translator/build_wasm_translator.sh`, the same for
-   `wasm/src/uam/build_wasm_uam.sh`; Emscripten 6.0.11, the emsdk named in the scripts).
-
-The NRO reads a `deko3d_glsl.bin` only with its own tag (`kInstalledTag` in the base's `banjo_renut_deko3d.cpp`,
-`INSTALLED_TAG` in `lib/package.js`), and a DKSH cache only with its compiler's tag (`CACHE_TAG` in `lib/variants.js`):
-change both sides together.
-
-## How the page works
-
-| Path | What it does |
+| Path | What it is |
 |---|---|
-| `index.html`, `app.js` | the page: the game (a disc image, `lib/xiso.js`, or a folder), the DLC, the options |
-| `lib/game_check.js` | whether the chosen copy is whole: the build's `game_files`, what is missing named |
-| `worker.js` | runs `lib/install.js` off the page's thread and streams the zip to `sw.js` |
-| `lib/install.js` | the whole build: the release files, the shaders, the zip (the page and `test/full_node.mjs` both run it) |
-| `lib/sources.js` | the shader containers: `default.xex` (`lib/xex.js`, LZX in `wasm/lzx`) and the records' codings |
-| `lib/build.js`, `lib/chain.js`, `lib/glsl_job.js`, `glsl_worker.js` | the translator and the GLSL chain on worker threads |
-| `lib/package.js` | `deko3d_glsl.bin` (version 2: the GLSL and the shader table's numbers) |
-| `lib/variants.js`, `lib/uam.js`, `uam_worker.js` | the variants and the DKSH cache (`deko3d_shaders.bin`) |
-| `lib/lz4b.js`, `lz4_worker.js` | the LZ4 block files (`wasm/lz4`: LZ4 1.10.0 HC) |
-| `lib/zip.js`, `sw.js` | the zip writer and the download stream |
-| `py/` | the base's Python shader tools, unchanged (`tools/sync_from_base.py`) |
-| `release/` | the NRO, `shader_common.h`, `variants.txt`, `pipeline_list.bin`, `manifest.json` |
+| `switch/blur-nx/blur-nx.nro` | the program |
+| `switch/blur-nx/deko3d_glsl.bin` | the game's 2,544 shaders, translated from your files |
+| `switch/blur-nx/deko3d_shaders.bin`, `pipeline_list.bin` | the same compiled for the Switch, and the pipelines the game builds at start (with **Compile the shaders**) |
+| `switch/blur-nx/game_root/` | the disc's files, and title update 2's `default.xexp` next to `default.xex` |
+| `switch/blur-nx/update/` | title update 2's other files (the game reads them as the console does, from `UPDATE:`) |
+| `switch/blur-nx/dlc/` | the DLC packages, installed at the first start |
+| `switch/blur-nx/README.txt` | the player's guide: the settings, the game menu |
 
-## Testing locally
+**Smaller game files.** Blur's data is nearly all compressed by the game already: packed with LZ4 its level streams
+would keep 95 % of their size, the videos 99 % and the archives 98 %. Packing those would only add decoding to every
+read while you drive, so they are copied as they are. The level render and physics files are not compressed, and are
+packed with **LZ4 HC level 9 in 256 KB blocks** as `NAME.lz4b` (231 MB to about 99 MB), which blur-nx reads as the files
+they were, at loading screens. The page was measured against ZXC too (the codec rr6-nx uses for its videos): 5 MB
+smaller over those files, and three times slower to decode on the console, so LZ4 it is.
 
-```bash
-python serve.py 8193 .
-```
+## Settings
 
-Then open http://127.0.0.1:8193/ in a Chromium browser. The browser test makes a zip from a served game folder with no
-file dialogs:
+The game writes `switch/blur-nx/blur.toml` at its first start: the language (by default the Switch's), the frame rate
+cap, the handheld and docked resolutions, SMAA, MSAA, four-core mode, the button layout and the game menu's look.
+Hold **A+B+X+Y+L+R** during the game to open the game menu, where you can change them. Delete the file to get the
+defaults back.
 
-```bash
-python serve.py 8193 . --test-files <game folder> --test-out test/out_zip/package.zip
-```
+## If something goes wrong
 
-and open http://127.0.0.1:8193/test/browser.html (`?compile=0` leaves the DKSH cache out), then
-`python test/check_zip.py test/out_zip/package.zip <game folder>`.
+- The page says the game is not supported: blur-nx supports one `default.xex`, the one the release's `manifest.json`
+  names. It also names any file missing from your copy.
+- A crash writes `switch/blur-nx/logs/rex/rex_crash.log`. For a bug report, add `log_level = "info"` at the top of
+  `switch/blur-nx/blur.toml`, play until the problem happens, and include the `switch/blur-nx/logs/` folder.
 
-Outputs of the tests (zips, shader files) are game data: never commit or share them.
+## How it works
+
+The rest of this file is for developers. The page is
+[renut_nx_ultimate_installer](https://github.com/ChanseyIsTheBest/renut_nx_ultimate_installer) (the web installer for
+ports of [renut_nx_ultimate_base](https://github.com/ChanseyIsTheBest/renut_nx_ultimate_base)) with Blur's `game.json`,
+colours and icon, and four things Blur needed:
+
+- **Blur's PAK2 archives** (`lib/pak2.js`, `lib/xmem.js`). 519 of Blur's shaders are in `default.xex`; the other 2,025
+  are in `cache/shaders-speed.pak`. A PAK2 file: `PAK2`, version 1, 2 KB alignment; the names XOR'd with a 14-byte key;
+  32-byte entries (hash, name offset, size, data offset in alignment units); each entry's data in chunks of a BE32
+  stored size and an XMem LZX buffer (128 KB window). `lib/xmem.js` is a port of the XMem LZX decoder blur-nx carries
+  (`app/src/blur_lzx_native.cpp`), checked byte for byte against the game's own decodes (`test/xmem_node.mjs`).
+- **Split shaders.** Blur registers its shaders with `XGRegister{Vertex,Pixel}Shader`, and its effects keep each
+  shader's header and its microcode apart: a record's container has both places (`at`/`length`,
+  `phys_at`/`phys_length`), which `lib/sources.js` puts together. `tools/blur_shader_records.mjs` writes the records
+  (offsets, sizes and hashes only).
+- **The title update** (`lib/stfs.js`, `lib/update.js`): the Xbox 360 package read in the browser (STFS: the file
+  table, the block chains through the hash tables), checked by its `default.xexp`'s SHA-256 and its files' sizes
+  (`manifest.json`'s `update`, from `tools/make_release.py --update`).
+- **The steps' numbers** follow the steps the game shows (`game.json`'s `update` and `dlc`).
+
+The translator (`wasm/renut_hlsl`), uam (`wasm/uam`) and the Python passes (`py/`) are blur-nx's own, so the page's
+shaders are the native build's.
+
+## Tests (Node 24, from this folder)
+
+| Test | What it checks |
+|---|---|
+| `node test/full_node.mjs <game> <out.zip> --update=<update package or folder> [--native-glsl=<blur-nx>/out/deko3d_shaders/glsl_opt] [--reference]` | the whole page in Node: the shaders, the packing, the zip; `--native-glsl` compares the GLSL with the native chain's |
+| `python test/check_zip.py <out.zip> <game>` | every file of the zip against the original (the `.lz4b` ones through the decoder) |
+| `node test/stfs_node.mjs <package> <extracted folder>` | `lib/stfs.js` against another tool's extraction, byte for byte |
+| `node test/xmem_node.mjs <dump>` | `lib/xmem.js` against the game's own LZX decodes (blur-nx's `blur_diag_xmem_dump`) |
+| `node test/pak2_probe.mjs <pak>`, `node test/pak2_split.mjs <shader dump> <pak>...` | the PAK2 layout, and where each shader's two parts are |
+| `test/browser.html` (with `python serve.py 8193 . --test-files <game> --test-out <zip>`) | `worker.js` in a browser, with no file dialogs |
+
+Outputs of the tests (zips, shader files, dumps) are game data: never commit or share them.
 
 ## License
 
 GPL-3.0 (see [LICENSE](LICENSE)). Third-party components are listed in [NOTICES.md](NOTICES.md).
+
+Blur is a trademark of Activision Publishing, Inc.; the icon artwork is © Activision. This project is not affiliated with
+or endorsed by Activision, Bizarre Creations, Microsoft or Nintendo.

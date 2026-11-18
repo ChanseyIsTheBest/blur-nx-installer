@@ -7,3 +7,5 @@ wasm/src/*/build/
 test/out_*
 *.lz4b
 *.zip
+# blur-nx-installer (2026-11-18): Pyodide's standard library is a release file, not an output
+!vendor/pyodide/python_stdlib.zip

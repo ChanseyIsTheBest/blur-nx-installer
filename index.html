@@ -5,19 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>web installer</title>
   <meta name="description" content="Builds the Nintendo Switch package of a renut-ultimate port from your own copy of the game, in your browser.">
-  <link rel="icon" href="./icon.png">
+  <link rel="icon" href="./icon.jpg">
   <style>
-    /* renut_nx_ultimate_installer: a port changes the colours here, game.json and icon.png */
-    :root { color-scheme: dark; --bg: #0b1020; --panel: rgba(20, 28, 52, .86); --inset: rgba(6, 10, 24, .8); --text: #eef2ff;
-      --muted: #aab4d4; --accent: #ffb547; --sky: #6aa8ff; --primary: #3f6fe0; --good: #5fd27f; --bad: #ff6b6b;
+    /* renut_nx_ultimate_installer: a port changes the colours here, game.json and the icon */
+    /* blur-nx: Blur's neon blue and pink on near-black */
+    :root { color-scheme: dark; --bg: #07080f; --panel: rgba(16, 18, 34, .88); --inset: rgba(4, 5, 12, .82); --text: #f1f3ff;
+      --muted: #a9b0d0; --accent: #ff4fb0; --sky: #38c8ff; --primary: #2c6fe8; --good: #5fd27f; --bad: #ff6b6b;
       --line: rgba(255, 255, 255, .12); }
     * { box-sizing: border-box; }
     [hidden] { display: none !important; }
     body { margin: 0; min-height: 100vh; color: var(--text); background: var(--bg);
       font: 16px/1.5 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
     body::before { content: ""; position: fixed; inset: 0; z-index: -1;
-      background: radial-gradient(60% 45% at 85% 10%, rgba(255, 181, 71, .16), transparent 70%),
-                  radial-gradient(70% 55% at 10% 20%, rgba(106, 168, 255, .24), transparent 70%), var(--bg); }
+      background: radial-gradient(60% 45% at 85% 10%, rgba(255, 79, 176, .18), transparent 70%),
+                  radial-gradient(70% 55% at 10% 20%, rgba(56, 200, 255, .22), transparent 70%), var(--bg); }
     main { max-width: 860px; margin: 0 auto; padding: 28px 16px; display: flex; flex-direction: column; gap: 14px; }
     header { text-align: center; }
     h1 { font-size: 2.2rem; font-weight: 900; margin: 0 0 12px; overflow-wrap: anywhere; }
@@ -55,13 +56,13 @@
 <main>
   <header>
     <h1><span data-game="package"></span> web installer</h1>
-    <img class="icon" src="./icon.png" alt="" width="160" height="160" onerror="this.hidden = true">
+    <img class="icon" src="./icon.jpg" alt="" width="160" height="160" onerror="this.hidden = true">
     <p class="lead">Builds the <strong>Nintendo Switch</strong> package of <strong data-game="title"></strong> from your own
       copy. Everything runs in <strong>this browser</strong>: nothing is uploaded.</p>
     <span class="version" id="version"></span>
   </header>
   <section>
-    <h2>1. Choose your game</h2>
+    <h2><span class="n"></span>Choose your game</h2>
     <label class="button" for="iso">Choose the disc image (.iso)</label>
     <label class="button" for="folder">Choose an extracted folder</label>
     <input id="iso" type="file" accept=".iso">
@@ -70,8 +71,18 @@
     <div class="chosen" id="chosen">Nothing chosen yet.</div>
     <div class="detected" id="detected" hidden></div>
   </section>
+  <section id="update-step" hidden>
+    <h2><span class="n"></span>Add <span data-update="title"></span></h2>
+    <label class="button" for="update">Choose the update package</label>
+    <label class="button" for="update-folder">Choose an extracted folder</label>
+    <input id="update" type="file">
+    <input id="update-folder" type="file" webkitdirectory>
+    <p class="note" data-text="update"></p>
+    <div class="chosen" id="update-chosen">Nothing chosen yet.</div>
+    <div class="detected" id="update-detected" hidden></div>
+  </section>
   <section id="dlc-step">
-    <h2>2. Add the DLC (optional)</h2>
+    <h2><span class="n"></span>Add the DLC (optional)</h2>
     <label class="button" for="dlc">Choose packages</label>
     <label class="button" for="dlc-folder">Choose a folder of packages</label>
     <input id="dlc" type="file" multiple>
@@ -81,18 +92,18 @@
     <div class="detected" id="dlc-detected" hidden></div>
   </section>
   <section>
-    <h2>3. Create the package</h2>
+    <h2><span class="n"></span>Create the package</h2>
     <label class="option" id="compile-row"><input id="compile" type="checkbox" checked>
       <span>Compile the shaders for the Switch here (recommended: the game starts and plays without compile stutters).
         Unticked, the Switch compiles each one the first time the game draws with it.</span></label>
     <button id="create" class="primary" disabled>Create the zip</button>
-    <p class="note">The shaders are made from your game's own files on all of this computer's cores, and the large archives
-      are packed with LZ4 (the game reads them as they were). The zip downloads while it is written.</p>
+    <p class="note" data-text="create">The shaders are made from your game's own files on all of this computer's cores, and
+      the large archives are packed with LZ4 (the game reads them as they were). The zip downloads while it is written.</p>
     <progress id="bar" max="1" value="0" hidden></progress>
     <div id="log" role="log" aria-live="polite"></div>
   </section>
   <section>
-    <h2>4. Copy it to the Switch</h2>
+    <h2><span class="n"></span>Copy it to the Switch</h2>
     <ol>
       <li>If you have an older version, delete its <code>switch/<span data-game="package"></span>/game_root</code> folder
         first: an unpacked archive left there is used instead of the packed one.</li>

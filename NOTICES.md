@@ -1,6 +1,8 @@
 # Third-party notices
 
-renut_nx_ultimate_installer is built from kameo-nx-installer, rr6-nx-installer and katamari-nx-installer, themselves
+blur-nx-installer is [renut_nx_ultimate_installer](https://github.com/ChanseyIsTheBest/renut_nx_ultimate_installer) with
+Blur's files (`game.json`, `lib/pak2.js`, `lib/xmem.js`, `lib/stfs.js`, `lib/update.js`, `tools/blur_shader_records.mjs`:
+blur-nx, GPL-3.0). renut_nx_ultimate_installer is built from kameo-nx-installer, rr6-nx-installer and katamari-nx-installer, themselves
 built on [renut-nx-webinstaller](https://github.com/ChanseyIsTheBest/renut-nx-webinstaller) (GPL-3.0).
 
 | Component | Where | License |
@@ -16,6 +18,7 @@ built on [renut-nx-webinstaller](https://github.com/ChanseyIsTheBest/renut-nx-we
 | [Pyodide](https://pyodide.org) 0.27.7 (CPython 3.12 for WebAssembly) and its numpy 2.0.2 wheel, unmodified | `vendor/pyodide/` | Pyodide: MPL-2.0; CPython: PSF License; numpy: BSD-3-Clause |
 | [LZ4](https://github.com/lz4/lz4) 1.10.0 by Yann Collet: `lz4.c`, `lz4.h`, `lz4hc.c`, `lz4hc.h`, unmodified | `wasm/src/lz4/`, `wasm/lz4.*` | BSD 2-Clause (`wasm/src/lz4/LICENSE`) |
 | [libmspack](https://www.cabextract.org.uk/libmspack/) by Stuart Caie: the LZX decoder (through katamari-nx-installer) | `wasm/lzx.*` | LGPL-2.1 |
+| The XMem LZX decoder of blur-nx (`app/src/blur_lzx_native.cpp`, a native of the game's own decoder's behaviour), ported to JavaScript | `lib/xmem.js` | GPL-3.0 |
 | [xxHash](https://github.com/Cyan4973/xxHash) and [{fmt}](https://github.com/fmtlib/fmt), in the translator | `wasm/renut_hlsl.*` | BSD-2-Clause; MIT |
 | [Emscripten](https://emscripten.org) 6.0.11 runtime and the musl libc it links | `wasm/*.mjs`, `wasm/*.wasm` | MIT and NCSA |
 
@@ -23,5 +26,5 @@ built on [renut-nx-webinstaller](https://github.com/ChanseyIsTheBest/renut-nx-we
 `wasm/src/uam/build_wasm_uam.sh` (both from the ultimate base's sources) and `wasm/lz4.*` by `wasm/src/lz4/build.sh`
 (Emscripten 6.0.11).
 
-The licenses of the software in the NRO are listed in the port's repository, with its source code. The example's
-`icon.png` is Beautiful Katamari's artwork, © Bandai Namco Entertainment.
+The licenses of the software in the NRO are listed in [blur-nx](https://github.com/ChanseyIsTheBest/blur-nx)'s
+repository, with its source code. `icon.jpg` is Blur's cover art, © Activision.
