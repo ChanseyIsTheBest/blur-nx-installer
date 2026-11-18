@@ -10,7 +10,9 @@ import { glslMaker, uamCompile, workerPool } from './lib/pool.js';
 const quiet = () => ({ print: () => {}, printErr: () => {} });
 
 async function fetchBytes(url) {
-  const response = await fetch(url);
+  // no-cache: the browser asks the server whether its copy is still current, so an old copy (cached up to 10 minutes
+  // by GitHub Pages) never meets a newer manifest
+  const response = await fetch(url, { cache: 'no-cache' });
   if (!response.ok) throw new Error(`${url}: HTTP ${response.status}`);
   return new Uint8Array(await response.arrayBuffer());
 }

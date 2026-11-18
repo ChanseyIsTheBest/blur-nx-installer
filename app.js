@@ -14,8 +14,8 @@ const dlcInput = $('dlc'), dlcFolderInput = $('dlc-folder'), dlcChosen = $('dlc-
 const updateInput = $('update'), updateFolderInput = $('update-folder'), updateChosen = $('update-chosen');
 const updateDetected = $('update-detected');
 const create = $('create'), compileBox = $('compile'), bar = $('bar'), logBox = $('log');
-const manifest = fetch('./release/manifest.json').then((r) => r.json());
-const game = fetch('./game.json').then((r) => r.json());
+const manifest = fetch('./release/manifest.json', { cache: 'no-cache' }).then((r) => r.json());
+const game = fetch('./game.json', { cache: 'no-cache' }).then((r) => r.json());
 let entries = null;
 let dlc = [];  // [{ path (under dlc/), size, file }]
 let update = null;  // blur-nx (2026-11-18): the title update when game.json names one: [{ path (in the update), size, file }]

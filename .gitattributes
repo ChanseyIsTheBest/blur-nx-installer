@@ -1,0 +1,4 @@
+# blur-nx-installer (2026-11-19): the page checks every release file against the SHA-256 that release/manifest.json
+# names, and GitHub Pages serves what git stores. With core.autocrlf, git stored README.txt with LF line ends while
+# make_release.py hashed the CRLF copy on disk, and the page refused it. Git keeps release/ byte for byte.
+release/** -text

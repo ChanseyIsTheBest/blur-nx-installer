@@ -95,6 +95,7 @@ shaders are the native build's.
 |---|---|
 | `node test/full_node.mjs <game> <out.zip> --update=<update package or folder> [--native-glsl=<blur-nx>/out/deko3d_shaders/glsl_opt] [--reference]` | the whole page in Node: the shaders, the packing, the zip; `--native-glsl` compares the GLSL with the native chain's |
 | `python test/check_zip.py <out.zip> <game>` | every file of the zip against the original (the `.lz4b` ones through the decoder) |
+| `python test/check_release.py [URL]` | every release file the page fetches against the manifest's SHA-256, as git stores it (what Pages serves) or as `URL` serves it: run it before and after every push (`.gitattributes` keeps `release/` byte for byte) |
 | `node test/stfs_node.mjs <package> <extracted folder>` | `lib/stfs.js` against another tool's extraction, byte for byte |
 | `node test/xmem_node.mjs <dump>` | `lib/xmem.js` against the game's own LZX decodes (blur-nx's `blur_diag_xmem_dump`) |
 | `node test/pak2_probe.mjs <pak>`, `node test/pak2_split.mjs <shader dump> <pak>...` | the PAK2 layout, and where each shader's two parts are |
