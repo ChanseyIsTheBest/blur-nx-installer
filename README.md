@@ -14,7 +14,6 @@ are not uploaded, and none of the game's files come with blur-nx.
 - Blur's **title update 2**, the last one: its Xbox 360 package (a LIVE file named like `TU_10LC225_...`), the folder
   that holds it, or the folder it was extracted to (`default.xexp`, `loc.pak`, `gamedata/`, `AvatarAwards`). blur-nx is
   recompiled from the update's code, so the page asks for it.
-- Optional: the game's **DLC** packages, as the Xbox 360 packages you have (not tested yet).
 - A desktop **Chromium browser** (Chrome, Edge, Brave...) and about 6 GB of free disk space for the download.
 - A Switch that runs homebrew (Atmosphère) with **Sphaira**, and an SD card with about 6 GB free.
 
@@ -25,13 +24,12 @@ are not uploaded, and none of the game's files come with blur-nx.
 2. **Choose your game**: the disc image (`.iso`) or the extracted folder. The page checks that it is the supported version
    and that every file is there.
 3. **Add title update 2**: the package, or a folder. The page checks that it is the update blur-nx is made from.
-4. Optional: **add the DLC** packages, or a folder of them.
-5. Press **Create blur-nx.zip**. The page makes the game's shaders for the Switch from your files (with **Compile the
+4. Press **Create blur-nx.zip**. The page makes the game's shaders for the Switch from your files (with **Compile the
    shaders** ticked, also compiled for the console, so the game plays without compile stutters), and the zip downloads
    while it is made; keep the page open until it finishes.
-6. If you have an older blur-nx, delete its `switch/blur-nx/game_root` folder first.
-7. Extract `blur-nx.zip` to the **root of the SD card**. It makes `switch/blur-nx/`.
-8. On the Switch, open **Sphaira**, find Blur, press **X** to open Options and choose **Install Forwarder**, make sure
+5. If you have an older blur-nx, delete its `switch/blur-nx/game_root` folder first.
+6. Extract `blur-nx.zip` to the **root of the SD card**. It makes `switch/blur-nx/`.
+7. On the Switch, open **Sphaira**, find Blur, press **X** to open Options and choose **Install Forwarder**, make sure
    **Address Space** is **39-bit**, choose **Create Forwarder**, then start the game from the **Home Screen**. Start it
    from the forwarder: that is what gives it four CPU cores.
 
@@ -44,7 +42,6 @@ are not uploaded, and none of the game's files come with blur-nx.
 | `switch/blur-nx/deko3d_shaders.bin`, `pipeline_list.bin` | the same compiled for the Switch, and the pipelines the game builds at start (with **Compile the shaders**) |
 | `switch/blur-nx/game_root/` | the disc's files, and title update 2's `default.xexp` next to `default.xex` |
 | `switch/blur-nx/update/` | title update 2's other files (the game reads them as the console does, from `UPDATE:`) |
-| `switch/blur-nx/dlc/` | the DLC packages, installed at the first start |
 | `switch/blur-nx/README.txt` | the player's guide: the settings, the game menu |
 
 **Smaller game files.** Blur's data is nearly all compressed by the game already: packed with LZ4 its level streams
@@ -87,7 +84,7 @@ colours and icon, and four things Blur needed:
 - **The title update** (`lib/stfs.js`, `lib/update.js`): the Xbox 360 package read in the browser (STFS: the file
   table, the block chains through the hash tables), checked by its `default.xexp`'s SHA-256 and its files' sizes
   (`manifest.json`'s `update`, from `tools/make_release.py --update`).
-- **The steps' numbers** follow the steps the game shows (`game.json`'s `update` and `dlc`).
+- **The steps' numbers** follow the steps the page shows (`game.json`'s `update`).
 
 The translator (`wasm/renut_hlsl`), uam (`wasm/uam`) and the Python passes (`py/`) are blur-nx's own, so the page's
 shaders are the native build's.

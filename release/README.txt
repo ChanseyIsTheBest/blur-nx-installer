@@ -6,7 +6,7 @@ and the ports' fixes) with reNut's Direct3D-level renderer on plume's deko3d bac
 model). Your own game files are needed; nothing of the game is in this package except the recompiled code.
 
 Install it with the web installer (https://chanseyisthebest.github.io/blur-nx-installer/): it makes blur-nx.zip from
-your disc, title update 2 and any DLC, in your browser. Extract the zip to the root of the SD card, then in Sphaira
+your disc and title update 2, in your browser. Extract the zip to the root of the SD card, then in Sphaira
 find Blur, press X, choose Install Forwarder, set Address Space to 39-bit, choose Create Forwarder, and start the game
 from the Home Screen.
 
@@ -26,8 +26,6 @@ sdmc:/switch/blur-nx/game_root/         the disc's files: default.xex and the re
                                         read). Title update 2's default.xexp goes next to default.xex. The level
                                         files are packed with LZ4 (NAME.lz4b; the game reads them as NAME).
 sdmc:/switch/blur-nx/update/            title update 2's other files (mounted as UPDATE:, as the console does)
-sdmc:/switch/blur-nx/dlc/               optional DLC packages (Xbox 360 LIVE files), installed at the first start;
-                                        not tested with any
 sdmc:/switch/blur-nx/logs/              logs: none in normal play; logs/rex/rex_crash.log after a crash
 
 Bug reports: add log_level = "info" at the top of blur.toml, play until the problem happens, and include the logs/

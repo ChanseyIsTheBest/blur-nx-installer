@@ -27,7 +27,7 @@ game.then((g) => {
   document.title = `${g.package} web installer`;
   for (const el of document.querySelectorAll('[data-game]')) el.textContent = g[el.dataset.game];
   for (const el of document.querySelectorAll('[data-text]')) el.innerHTML = g.texts?.[el.dataset.text] || '';
-  $('dlc-step').hidden = !g.dlc;
+  if ($('dlc-step')) $('dlc-step').hidden = !g.dlc;  // blur-nx-installer: the page has no DLC step (Blur takes none)
   $('update-step').hidden = !g.update;
   for (const el of document.querySelectorAll('[data-update]')) el.textContent = g.update?.[el.dataset.update] || '';
   // the steps' numbers, over the ones this game shows
@@ -217,13 +217,13 @@ updateFolderInput.addEventListener('change', async (event) => {
   }
 });
 
-dlcInput.addEventListener('change', async (event) => {
+dlcInput?.addEventListener('change', async (event) => {
   const files = [...event.target.files];
   event.target.value = '';
   await chooseDlc(files.map((file) => ({ path: file.name, size: file.size, file })));
 });
 
-dlcFolderInput.addEventListener('change', async (event) => {
+dlcFolderInput?.addEventListener('change', async (event) => {
   const files = [...event.target.files];
   event.target.value = '';
   // the paths inside the chosen folder (its own name dropped): the game walks into subfolders of dlc/

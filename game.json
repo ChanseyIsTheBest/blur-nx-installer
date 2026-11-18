@@ -3,15 +3,26 @@
   "package": "blur-nx",
   "nro": "blur-nx.nro",
   "shaders": true,
-  "lz4": [".*\\.levelrender", ".*\\.levelphysics", ".*\\.level"],
-  "skip": ["\\$SystemUpdate/.*", "default\\.xexp"],
-  "needs": ["cache/root\\.pak", "cache/shaders-speed\\.pak"],
-  "dlc": true,
-  "update": { "title": "title update 2" },
+  "lz4": [
+    ".*\\.levelrender",
+    ".*\\.levelphysics",
+    ".*\\.level"
+  ],
+  "skip": [
+    "\\$SystemUpdate/.*",
+    "default\\.xexp"
+  ],
+  "needs": [
+    "cache/root\\.pak",
+    "cache/shaders-speed\\.pak"
+  ],
+  "dlc": false,
+  "update": {
+    "title": "title update 2"
+  },
   "texts": {
     "game": "Your Xbox 360 disc of Blur as an <code>.iso</code>, or the folder it was extracted to (with <code>default.xex</code>, <code>cache/</code>, <code>levels/</code>, <code>layer1/</code> and <code>Ui/</code>).",
     "update": "Blur's title update 2, the last one: the port is made from its code. Choose the Xbox 360 package (a LIVE file named like <code>TU_10LC225_...</code>), the folder that holds it, or the folder it was extracted to (with <code>default.xexp</code>, <code>loc.pak</code> and <code>gamedata/</code>).",
-    "dlc": "The game's downloadable content, as the Xbox 360 packages you have (<code>LIVE</code> files), or a folder of them. The game installs them at its first start. Not tested with any yet.",
     "create": "The shaders are made from your game's own files on all of this computer's cores, and the level files are packed with LZ4 (the game reads them as they were; the rest of Blur's data is compressed already). The zip downloads while it is written.",
     "settings": "The game writes its settings file, <code>blur.toml</code>, at its first start: the language, the frame rate cap, the resolutions, SMAA, MSAA, four-core mode and the buttons. Hold <strong>A+B+X+Y+L+R</strong> during the game to open its menu.",
     "footer": "Blur is a trademark of Activision Publishing, Inc. Not affiliated with or endorsed by Activision, Bizarre Creations, Microsoft or Nintendo."
