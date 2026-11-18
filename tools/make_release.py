@@ -13,7 +13,8 @@ Writes into release/:
                         page compiles into the console's DKSH cache
   pipeline_list.bin     with --pipeline-list: the console prebuilds those pipelines at start (only with the cache)
   <name>                each --file (the settings file a release carries, for example)
-  manifest.json         per build: default.xex's SHA-256, the NRO's and every file's, and where the page finds each of
+  manifest.json         per build: default.xex's SHA-256, the NRO's and every file's, the game's files with their sizes
+                        ("game_files", tools/game_files.py: the page refuses a copy without them), and where the page finds each of
                         the port's shaders ("shaders": the containers of default.xex by SHA-256, and --records, the
                         ones in the game's own files)
 
@@ -104,6 +105,10 @@ def main():
     nro = open(a.nro, 'rb').read()
     shutil.copyfile(a.nro, os.path.join(REL, game_cfg['nro']))
     build['nro_sha256'] = sha256(nro)
+    # 2026-11-18: the game's files, which the page checks the player's copy against (tools/game_files.py)
+    from game_files import game_files
+    build['game_files'] = game_files(a.game, game_cfg.get('skip', []))
+    print(f'game files: {len(build["game_files"])}, {sum(build["game_files"].values()):,} bytes')
 
     # the shaders: every container of the dump, in default.xex or in a record
     if game_cfg.get('shaders'):

@@ -19,9 +19,9 @@ The example in this repository is Beautiful Katamari, the base's own game: the b
 
 1. **`game.json`**: the game's title, the port's folder on the SD card (`package`: `switch/<package>/`), the NRO's name,
    whether the page makes the shaders (`shaders`), which files are packed with LZ4 (`lz4`, case-insensitive regular
-   expressions on paths in the game folder), which are left out (`skip`), which must be there (`needs`), whether it takes
-   DLC packages (`dlc`, copied whole to `switch/<package>/dlc/`, which the base installs at the first start), and the
-   page's texts.
+   expressions on paths in the game folder), which are left out (`skip`), which must be there (`needs`), which may be
+   absent from a player's copy (`optional`; see step 4), whether it takes DLC packages (`dlc`, copied whole to
+   `switch/<package>/dlc/`, which the base installs at the first start), and the page's texts.
 2. **The NRO**: build the port with `-DBANJO_RENUT_RELEASE_SHADERS=ON` (no game shader in it). A shader the game makes
    at runtime (one no game file holds) must stay in the NRO: `tools/make_release.py` stops when the port's shader dump
    has one that is neither in `default.xex` nor in a record.
@@ -37,7 +37,17 @@ The example in this repository is Beautiful Katamari, the base's own game: the b
 
    `--pipeline-list` (a console's or Ryujinx's `pipeline_list.bin`) gives `variants.txt`, the variants the page compiles,
    and ships the list itself (the console prebuilds those pipelines). `--file <src>[:<name>]` adds a release file (a
-   settings file, for example). Then make the reference shader files and check the whole package:
+   settings file, for example).
+
+   The build also records the game's files with their sizes (`game_files`, from `--game`, less what `skip` leaves out).
+   The page refuses a copy missing any of them, or with one of another size, and names what is wrong
+   (`lib/game_check.js`): "data/ (all 1384 files)", "cse/ (12 of 40 files: ...)". So a copy with `default.xex` (and
+   `default.xexp`) and little else is caught when it is chosen, not at the console. The disc's own extras
+   (`$SystemUpdate`, `$TitleUpdate`, `nxeart`, `AvatarAssetPack`) and what `optional` names are never required. For a
+   manifest made before this, add the list with `python tools/game_files.py <game folder>`; check it with
+   `node test/game_check_node.mjs <game folder>`.
+
+   Then make the reference shader files and check the whole package:
 
    ```bash
    node test/full_node.mjs <game folder> <out.zip> --reference --native-glsl=<port>/out/deko3d_shaders/glsl_opt
@@ -61,6 +71,7 @@ change both sides together.
 | Path | What it does |
 |---|---|
 | `index.html`, `app.js` | the page: the game (a disc image, `lib/xiso.js`, or a folder), the DLC, the options |
+| `lib/game_check.js` | whether the chosen copy is whole: the build's `game_files`, what is missing named |
 | `worker.js` | runs `lib/install.js` off the page's thread and streams the zip to `sw.js` |
 | `lib/install.js` | the whole build: the release files, the shaders, the zip (the page and `test/full_node.mjs` both run it) |
 | `lib/sources.js` | the shader containers: `default.xex` (`lib/xex.js`, LZX in `wasm/lzx`) and the records' codings |

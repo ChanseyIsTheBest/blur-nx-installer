@@ -5,6 +5,7 @@
 // From rr6-nx-installer's and kameo-nx-installer's app.js (bejeweled3-nx-installer's, ChanseyIsTheBest;
 // nfsmw-nx-installer's download flow, StevensND; GPL-3.0).
 import { listXiso } from './lib/xiso.js';
+import { checkGameFiles, describeProblems, optionalPaths } from './lib/game_check.js';
 
 const $ = (id) => document.getElementById(id);
 const folderInput = $('folder'), isoInput = $('iso'), chosen = $('chosen'), detected = $('detected');
@@ -73,6 +74,13 @@ async function choose(list, what) {
   const build = (await manifest).builds.find((b) => b.xex_sha256 === hash);
   if (!build) {
     show('bad', `This default.xex is not one this release supports. Its SHA-256: ${hash}`);
+    return;
+  }
+  // 2026-11-18: every file of the copy the release was made from (the build's "game_files"), with its size: a copy with
+  // default.xex and little else (or a file cut short) is refused here, with what is missing named (lib/game_check.js).
+  const problems = describeProblems(checkGameFiles(list, build.game_files, optionalPaths(g)));
+  if (problems) {
+    show('bad', problems);
     return;
   }
   const missing = (g.needs || []).filter((p) => !list.some((e) => new RegExp(`^(?:${p})$`, 'i').test(e.path)));
