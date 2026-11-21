@@ -19,6 +19,8 @@ built on [renut-nx-webinstaller](https://github.com/ChanseyIsTheBest/renut-nx-we
 | [LZ4](https://github.com/lz4/lz4) 1.10.0 by Yann Collet: `lz4.c`, `lz4.h`, `lz4hc.c`, `lz4hc.h`, unmodified | `wasm/src/lz4/`, `wasm/lz4.*` | BSD 2-Clause (`wasm/src/lz4/LICENSE`) |
 | [ZXC](https://github.com/hellobertrand/zxc) 0.15.0 by Bertrand Lebonnois: its library, unmodified but for `zxc_driver.c` left out (the same commit blur-nx decodes with; through rr6-nx-installer 1.0.1) | `wasm/src/zxc/`, `wasm/zxc.*` | BSD 3-Clause (`wasm/src/zxc/LICENSE`) |
 | [rapidhash](https://github.com/Nicoshev/rapidhash) by Nicolas De Carli, bundled with ZXC | `wasm/src/zxc/src/lib/vendors/rapidhash.h`, `wasm/zxc.*` | MIT (`wasm/src/zxc/THIRD_PARTY_NOTICES`) |
+| [rr6-nx-installer](https://github.com/ChanseyIsTheBest/rr6-nx-installer) and [culdcept-nx-installer](https://github.com/ChanseyIsTheBest/culdcept-nx-installer) by ChanseyIsTheBest: the movies' H.265 re-encode (the browser's H.265 encoder, rr6-nx's tagged movie format; rr6-nx-installer's `lib/sfdh.js` adapted as `lib/biks.js`) and the WebAssembly decoder's build | `lib/biks.js`, `wasm/src/bink/` | GPL-3.0 |
+| [FFmpeg](https://ffmpeg.org) 4.4 (rr6-nx's `sdk/thirdparty/FFmpeg`): libavcodec's Bink video decoder and libavutil, built with that decoder only | `wasm/bink.*` | LGPL-2.1-or-later |
 | [libmspack](https://www.cabextract.org.uk/libmspack/) by Stuart Caie: the LZX decoder (through katamari-nx-installer) | `wasm/lzx.*` | LGPL-2.1 |
 | The XMem LZX decoder of blur-nx (`app/src/blur_lzx_native.cpp`, a native of the game's own decoder's behaviour), ported to JavaScript | `lib/xmem.js` | GPL-3.0 |
 | [xxHash](https://github.com/Cyan4973/xxHash) and [{fmt}](https://github.com/fmtlib/fmt), in the translator | `wasm/renut_hlsl.*` | BSD-2-Clause; MIT |
@@ -26,7 +28,8 @@ built on [renut-nx-webinstaller](https://github.com/ChanseyIsTheBest/renut-nx-we
 
 `wasm/renut_hlsl.*` is built by `wasm/src/translator/build_wasm_translator.sh`, `wasm/uam.*` by
 `wasm/src/uam/build_wasm_uam.sh` (both from the ultimate base's sources), `wasm/lz4.*` by `wasm/src/lz4/build.sh` and
-`wasm/zxc.*` by `wasm/src/zxc/build.sh` (Emscripten 6.0.11).
+`wasm/zxc.*` by `wasm/src/zxc/build.sh` and `wasm/bink.*` by `wasm/src/bink/build.sh` (FFmpeg 4.4's source, unmodified,
+configured with the Bink decoder only; Emscripten 6.0.11).
 
 The licenses of the software in the NRO are listed in [blur-nx](https://github.com/ChanseyIsTheBest/blur-nx)'s
 repository, with its source code. `icon.jpg` is Blur's cover art, © Activision.

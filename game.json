@@ -11,6 +11,9 @@
   "zxc": [
     ".*\\.levelstream"
   ],
+  "movies": [
+    "Ui/movies/.*\\.bik"
+  ],
   "skip": [
     "\\$SystemUpdate/.*",
     "default\\.xexp"
@@ -26,7 +29,7 @@
   "texts": {
     "game": "Your Xbox 360 disc of Blur as an <code>.iso</code>, or the folder it was extracted to (with <code>default.xex</code>, <code>cache/</code>, <code>levels/</code>, <code>layer1/</code> and <code>Ui/</code>).",
     "update": "Blur's title update 2, the last one: the port is made from its code. Choose the Xbox 360 package (a LIVE file named like <code>TU_10LC225_...</code>), the folder that holds it, or the folder it was extracted to (with <code>default.xexp</code>, <code>loc.pak</code> and <code>gamedata/</code>).",
-    "create": "The shaders are made from your game's own files on all of this computer's cores, and the level files are packed: LZ4 for what a level loads, ZXC for the level streams read while racing (the game reads them as they were; the rest of Blur's data is compressed already). The zip downloads while it is written.",
+    "create": "The shaders are made from your game's own files on all of this computer's cores, the level files are packed (LZ4 for what a level loads, ZXC for the level streams read while racing) and the movies are re-encoded to H.265 and packed with ZXC (the game reads them all as they were; the rest of Blur's data is compressed already). The zip downloads while it is written.",
     "settings": "The game writes its settings file, <code>blur.toml</code>, at its first start: the language, the frame rate cap, the resolutions, SMAA, MSAA, four-core mode and the buttons. Hold <strong>A+B+X+Y+L+R</strong> during the game to open its menu.",
     "footer": "Blur is a trademark of Activision Publishing, Inc. Not affiliated with or endorsed by Activision, Bizarre Creations, Microsoft or Nintendo."
   }

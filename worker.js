@@ -4,6 +4,7 @@
 import createRenutHlslModule from './wasm/renut_hlsl.mjs';
 import createLzxModule from './wasm/lzx.mjs';
 import createXexpModule from './wasm/xexp.mjs';
+import { canEncodeHevc } from './lib/biks.js';
 import { buildPackage } from './lib/install.js';
 import { CODECS } from './lib/lz4b.js';
 import { glslMaker, uamCompile, workerPool } from './lib/pool.js';
@@ -103,7 +104,21 @@ self.onmessage = async ({ data }) => {
     // A GLSL worker (Pyodide, numpy, DXC) holds about 0.5 GB: at most 8, fewer on a device with less memory
     // (navigator.deviceMemory, in GB, Chromium only). uam and LZ4 workers are small: one per core.
     const glslThreads = Math.max(1, Math.min(cores, 8, navigator.deviceMemory || 8));
+    // blur-nx-installer 1.0.1 (2026-11-21): the movies as H.265 when the page asked and the browser has an encoder:
+    // FFmpeg's Bink decoder (wasm/bink) into WebCodecs at MOVIE_FRACTION of each movie's video bitrate, a keyframe every
+    // MOVIE_GOP frames (blur-nx's tools/bik_hevc_pack.py)
+    const MOVIE_FRACTION = 0.22, MOVIE_GOP = 120;
+    let movies = null;
+    if (data.options?.movies && game.movies) {
+      if (await canEncodeHevc()) {
+        const { default: createBinkModule } = await import('./wasm/bink.mjs');
+        movies = { bink: await createBinkModule(quiet()), fraction: MOVIE_FRACTION, gop: MOVIE_GOP };
+      } else {
+        postMessage({ type: 'log', text: 'This browser has no H.265 encoder: the movies are copied as they are.' });
+      }
+    }
     const tools = {
+      movies,
       cores,
       glslThreads,
       translator: game.shaders ? await createRenutHlslModule(quiet()) : null,
