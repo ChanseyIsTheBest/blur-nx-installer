@@ -11,6 +11,7 @@
 #   BUILD       the build folder (default: C:/blur_wasm_ffmpeg_bink; no spaces)
 #   MAKE        make (default: devkitPro's MSYS2 make)
 #   OUT         output folder (default: the installer's wasm/)
+#   JOBS        make's parallel jobs (default: 8)
 # usage: wasm/src/bink/build.sh   (Git Bash)
 set -eu
 HERE=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
@@ -52,7 +53,7 @@ if [ ! -f ffbuild/config.mak ]; then
     --disable-avdevice --disable-avformat --disable-swresample --disable-swscale --disable-postproc \
     --disable-avfilter --extra-cflags="-O3"
 fi
-"$MAKE" -j8 libavcodec/libavcodec.a libavutil/libavutil.a
+"$MAKE" -j"${JOBS:-8}" libavcodec/libavcodec.a libavutil/libavutil.a
 
 emcc -O3 -I"$BUILD" -I"$FFMPEG_SRC" "$HERE/bink_wasm.c" "$BUILD/libavcodec/libavcodec.a" "$BUILD/libavutil/libavutil.a" \
   -s MODULARIZE=1 -s EXPORT_ES6=1 -s ENVIRONMENT=web,worker,node -s ALLOW_MEMORY_GROWTH=1 \
