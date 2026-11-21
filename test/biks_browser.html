@@ -1,0 +1,35 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>biks browser test</title>
+<!-- blur-nx-installer 1.0.1: lib/biks.js in a real browser (WebCodecs' H.265 encoder, wasm/bink): one movie from the
+     test server's /_test/ (serve.py --test-files <the game's Ui/movies>) re-encoded as the installer does it, the
+     .bik.hevc saved through /_test_write (serve.py --test-out <file>) for blur-nx's tools/bik_hevc_pack.py --check.
+       test/biks_browser.html?movie=atvi.bik -->
+<pre id="out"></pre>
+<script type="module">
+import { canEncodeHevc, reencodeBink } from '../lib/biks.js';
+import createBinkModule from '../wasm/bink.mjs';
+
+const out = document.getElementById('out');
+const log = (t) => { out.textContent += `${t}\n`; };
+try {
+  const name = new URLSearchParams(location.search).get('movie') || 'atvi.bik';
+  log(`H.265 encoder: ${await canEncodeHevc()}`);
+  const bytes = new Uint8Array(await (await fetch(`/_test/${encodeURIComponent(name)}`)).arrayBuffer());
+  const bink = await createBinkModule({ print: () => {}, printErr: () => {} });
+  const t0 = performance.now();
+  const r = await reencodeBink(bytes, bink, { fraction: 0.22, gop: 120 });
+  const s = (performance.now() - t0) / 1000;
+  if (!r.bytes) {
+    log(`${name}: not re-encoded: ${r.why}`);
+  } else {
+    log(`${name}: ${(bytes.length / 1048576).toFixed(1)} MB -> ${(r.bytes.size / 1048576).toFixed(1)} MB, ${r.frames} frames ` +
+        `at ${r.kbps} kbit/s, ${s.toFixed(1)} s (${(r.frames / s).toFixed(0)} frames a second)`);
+    const w = await fetch('/_test_write?offset=0', { method: 'POST', body: r.bytes });
+    log(`saved: HTTP ${w.status}`);
+  }
+} catch (e) {
+  log(`error: ${e.message || e}`);
+}
+document.title = 'biks done';
+</script>
