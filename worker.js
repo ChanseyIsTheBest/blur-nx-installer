@@ -4,6 +4,7 @@
 import createRenutHlslModule from './wasm/renut_hlsl.mjs';
 import createLzxModule from './wasm/lzx.mjs';
 import createXexpModule from './wasm/xexp.mjs';
+import { canEncodeOpus } from './lib/audio.js';  // blur-nx-installer 1.0.1 (2026-11-22): the streamed music as Opus
 import { canEncodeHevc } from './lib/biks.js';
 import { buildPackage } from './lib/install.js';
 import { CODECS } from './lib/lz4b.js';
@@ -117,8 +118,21 @@ self.onmessage = async ({ data }) => {
         postMessage({ type: 'log', text: 'This browser has no H.265 encoder: the movies are copied as they are.' });
       }
     }
+    // blur-nx-installer 1.0.1 (2026-11-22, the user: "128k"): game.json "audio" (cache/root_streaming.pak) as NAME.xmop,
+    // its XMA sounds as Opus (lib/audio.js: wasm/xma's decode, WebCodecs' Opus encoder) when the page asked and the
+    // browser has an encoder
+    let audio = null;
+    if (data.options?.audio && game.audio) {
+      if (await canEncodeOpus()) {
+        const { default: createXmaModule } = await import('./wasm/xma.mjs');
+        audio = { xma: await createXmaModule(quiet()), rules: game.audio.bitrates };
+      } else {
+        postMessage({ type: 'log', text: 'This browser has no Opus encoder: the streamed music is copied as it is.' });
+      }
+    }
     const tools = {
       movies,
+      audio,
       cores,
       glslThreads,
       translator: game.shaders ? await createRenutHlslModule(quiet()) : null,

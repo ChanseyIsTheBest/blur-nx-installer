@@ -91,6 +91,12 @@
       <span>Re-encode the movies to H.265 (recommended: the 31 Bink movies, 1.3 GB, become about a quarter of their size,
         and the Switch's video hardware decodes them instead of the CPU). Needs a browser with an H.265 encoder (Chrome or
         Edge on a recent graphics card); without one, or unticked, the movies are copied as they are.</span></label>
+    <!-- blur-nx-installer 1.0.1 (2026-11-22, the user: "128k"; as sasrt-nx-installer and culdcept-nx-installer): the streamed
+         music and ambience as Opus -->
+    <label class="option" id="audio-row"><input id="audio" type="checkbox" checked>
+      <span>Re-encode the streamed music and ambience to Opus at 128 kbit/s (recommended: <code>root_streaming.pak</code>,
+        250 MB of XMA, becomes about 190 MB, and sounds the same to nearly everyone). Needs a browser with an Opus
+        encoder (Chrome, Edge or Firefox); without one, or unticked, it is copied as it is.</span></label>
     <button id="create" class="primary" disabled>Create the zip</button>
     <p class="note" data-text="create">The shaders are made from your game's own files on all of this computer's cores, and
       the large archives are packed with LZ4 (the game reads them as they were). The zip downloads while it is written.</p>

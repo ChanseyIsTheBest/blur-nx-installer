@@ -14,6 +14,7 @@ const dlcInput = $('dlc'), dlcFolderInput = $('dlc-folder'), dlcChosen = $('dlc-
 const updateInput = $('update'), updateFolderInput = $('update-folder'), updateChosen = $('update-chosen');
 const updateDetected = $('update-detected');
 const create = $('create'), compileBox = $('compile'), moviesBox = $('movies'), bar = $('bar'), logBox = $('log');
+const audioBox = $('audio');  // blur-nx-installer 1.0.1 (2026-11-22): the streamed music as Opus
 const manifest = fetch('./release/manifest.json', { cache: 'no-cache' }).then((r) => r.json());
 const game = fetch('./game.json', { cache: 'no-cache' }).then((r) => r.json());
 let entries = null;
@@ -35,6 +36,7 @@ game.then((g) => {
   for (const el of document.querySelectorAll('section:not([hidden]) h2 .n')) el.textContent = `${++n}. `;
   $('compile-row').hidden = !g.shaders;
   $('movies-row').hidden = !g.movies;  // blur-nx-installer 1.0.1: the movies' H.265 re-encode
+  $('audio-row').hidden = !g.audio;  // and the streamed music's Opus
   create.textContent = `Create ${g.package}.zip`;
   manifest.then((m) => { $('version').textContent = `version ${m.version}`; });
 });
@@ -330,6 +332,7 @@ create.addEventListener('click', async () => {
     finish();
   };
   worker.postMessage({ entries, dlc, update: update || [], compile: compileBox.checked,
-                       options: { movies: moviesBox.checked && !$('movies-row').hidden }, port: channel.port1 },
+                       options: { movies: moviesBox.checked && !$('movies-row').hidden,
+                                  audio: audioBox.checked && !$('audio-row').hidden }, port: channel.port1 },
                      [channel.port1]);
 });
