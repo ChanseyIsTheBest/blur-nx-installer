@@ -1,0 +1,39 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>xmop browser test</title>
+<!-- blur-nx-installer 1.0.1 (2026-11-22): lib/audio.js in a real browser (WebCodecs' Opus encoder, wasm/xma): one file
+     from the test server's /_test/ (serve.py --test-files <the game's cache folder>) as NAME.xmop, as the installer
+     makes it (game.json's audio bitrates), saved through /_test_write (serve.py --test-out <file>) for
+     test/xmop_check.mjs.
+       test/xmop_browser.html?file=root_streaming.pak -->
+<pre id="out"></pre>
+<script type="module">
+import { canEncodeOpus, makeXmop } from '../lib/audio.js';
+import createXmaModule from '../wasm/xma.mjs';
+
+const out = document.getElementById('out');
+const log = (t) => { out.textContent += `${t}\n`; };
+try {
+  const name = new URLSearchParams(location.search).get('file') || 'root_streaming.pak';
+  log(`Opus encoder: ${await canEncodeOpus()}`);
+  const game = await (await fetch('../game.json', { cache: 'no-cache' })).json();
+  const bytes = new Uint8Array(await (await fetch(`/_test/${encodeURIComponent(name)}`)).arrayBuffer());
+  const xma = await createXmaModule({ print: () => {}, printErr: () => {} });
+  const t0 = performance.now();
+  const r = await makeXmop(bytes, xma, { path: `cache/${name}`, pack: 0, rules: game.audio.bitrates, jobs: 6,
+                                         onSound: (d, n) => { if (d % 20 === 0 || d === n) log(`  ${d} of ${n} sounds`); } });
+  const s = (performance.now() - t0) / 1000;
+  if (!r.parts) {
+    log(`${name}: not converted: ${r.why}`);
+  } else {
+    log(`${name}: ${(bytes.length / 1048576).toFixed(1)} MB -> ${(r.size / 1048576).toFixed(1)} MB, ${r.made} of ` +
+        `${r.candidates} sounds as Opus (kept: ${r.kept.map(([w, n]) => `${n} ${w}`).join(', ') || 'none'}), ${s.toFixed(1)} s`);
+    const blob = new Blob(r.parts);
+    const w = await fetch('/_test_write?offset=0', { method: 'POST', body: blob });
+    log(`saved: HTTP ${w.status} (${blob.size} bytes)`);
+  }
+} catch (e) {
+  log(`error: ${e.message || e}`);
+}
+document.title = 'xmop done';
+</script>
