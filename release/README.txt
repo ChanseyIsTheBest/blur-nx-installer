@@ -24,7 +24,11 @@ sdmc:/switch/blur-nx/deko3d_shaders.bin the same compiled for the Switch, and pi
 sdmc:/switch/blur-nx/blur.toml          your settings (fourteen of them; written at the first start, see "Settings")
 sdmc:/switch/blur-nx/game_root/         the disc's files: default.xex and the rest of the disc (the ISO itself is not
                                         read). Title update 2's default.xexp goes next to default.xex. The level
-                                        files are packed with LZ4 (NAME.lz4b; the game reads them as NAME).
+                                        files are packed (NAME.lz4b), the movies re-encoded to H.265 for the
+                                        Switch's video decoder (Ui/movies/NAME.bik.hevc.lz4b) and the streamed music
+                                        and ambience to Opus (cache/root_streaming.pak.xmop); the game reads each as
+                                        NAME. A plain NAME next to its packed form is read instead, so delete an
+                                        older blur-nx's game_root before extracting a new zip.
 sdmc:/switch/blur-nx/update/            title update 2's other files (mounted as UPDATE:, as the console does)
 sdmc:/switch/blur-nx/logs/              logs: none in normal play; logs/rex/rex_crash.log after a crash
 

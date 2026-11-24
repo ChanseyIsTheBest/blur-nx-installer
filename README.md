@@ -1,6 +1,6 @@
 # blur-nx-installer
 
-Version 1.0.0, for **blur-nx 1.0.0**: Blur on the Nintendo Switch (homebrew), by ChanseyIsTheBest.
+Version 1.0.1, for **blur-nx 1.0.1**: Blur on the Nintendo Switch (homebrew), by ChanseyIsTheBest.
 
 **Open the page: https://chanseyisthebest.github.io/blur-nx-installer/**
 
@@ -14,7 +14,8 @@ are not uploaded, and none of the game's files come with blur-nx.
 - Blur's **title update 2**, the last one: its Xbox 360 package (a LIVE file named like `TU_10LC225_...`), the folder
   that holds it, or the folder it was extracted to (`default.xexp`, `loc.pak`, `gamedata/`, `AvatarAwards`). blur-nx is
   recompiled from the update's code, so the page asks for it.
-- A desktop **Chromium browser** (Chrome, Edge, Brave...) and about 6 GB of free disk space for the download.
+- A desktop **Chromium browser** (Chrome, Edge, Brave...) and about 6 GB of free disk space for the download. Chrome
+  or Edge on a recent graphics card can also re-encode the movies (their H.265 encoder).
 - A Switch that runs homebrew (Atmosphère) with **Sphaira**, and an SD card with about 6 GB free.
 
 ## How to use it
@@ -25,9 +26,11 @@ are not uploaded, and none of the game's files come with blur-nx.
    and that every file is there.
 3. **Add title update 2**: the package, or a folder. The page checks that it is the update blur-nx is made from.
 4. Press **Create blur-nx.zip**. The page makes the game's shaders for the Switch from your files (with **Compile the
-   shaders** ticked, also compiled for the console, so the game plays without compile stutters), and the zip downloads
-   while it is made; keep the page open until it finishes.
-5. If you have an older blur-nx, delete its `switch/blur-nx/game_root` folder first.
+   shaders** ticked, also compiled for the console, so the game plays without compile stutters), re-encodes the movies
+   and the streamed music (the two **Re-encode** options, both recommended), and the zip downloads while it is made;
+   keep the page open until it finishes.
+5. If you have an older blur-nx, delete its `switch/blur-nx/game_root` folder first: a file of an older zip left next to
+   its packed or re-encoded form is read instead of it.
 6. Extract `blur-nx.zip` to the **root of the SD card**. It makes `switch/blur-nx/`.
 7. On the Switch, open **Sphaira**, find Blur, press **X** to open Options and choose **Install Forwarder**, make sure
    **Address Space** is **39-bit**, choose **Create Forwarder**, then start the game from the **Home Screen**. Start it
@@ -44,12 +47,15 @@ are not uploaded, and none of the game's files come with blur-nx.
 | `switch/blur-nx/update/` | title update 2's other files (the game reads them as the console does, from `UPDATE:`) |
 | `switch/blur-nx/README.txt` | the player's guide: the settings, the game menu |
 
-**Smaller game files.** Blur's data is nearly all compressed by the game already: packed with LZ4 its level streams
-would keep 95 % of their size, the videos 99 % and the archives 98 %. Packing those would only add decoding to every
-read while you drive, so they are copied as they are. The level render and physics files are not compressed, and are
-packed with **LZ4 HC level 9 in 256 KB blocks** as `NAME.lz4b` (231 MB to about 99 MB), which blur-nx reads as the files
-they were, at loading screens. The page was measured against ZXC too (the codec rr6-nx uses for its videos): 5 MB
-smaller over those files, and three times slower to decode on the console, so LZ4 it is.
+**Smaller game files** (1.0.1). The level render and physics files are packed with **LZ4 HC level 9 in 256 KB
+blocks** and the level streams with **ZXC in 512 KB blocks** (rr6-nx-installer 1.0.1's packing), as `NAME.lz4b`, which
+blur-nx reads as the files they were: 3,016 MB to 2,803 MB. The 31 Bink movies are re-encoded to **H.265** with the
+browser's video encoder (WebCodecs, about 2.7 Mbit/s) and packed as ZXC blocks (`Ui/movies/NAME.bik.hevc.lz4b`, rr6-nx's
+tagged movie format): the Switch's video decoder plays the pictures, and each movie's audio tracks stay the game's own
+(1,251 MB to 334 MB). `04_FanTarget.bik` is copied as it is: its frame 321 does not decode in FFmpeg's Bink decoder.
+The streamed music and ambience (`cache/root_streaming.pak`) become **Opus at 128 kbit/s** (64 kbit/s for mono), as
+`cache/root_streaming.pak.xmop` (sasrt-nx's format; 251 MB to 182 MB). In all, the SD card's game files go from 5.4 GB
+to about 4.2 GB.
 
 ## Settings
 
@@ -85,6 +91,10 @@ colours and icon, and four things Blur needed:
   table, the block chains through the hash tables), checked by its `default.xexp`'s SHA-256 and its files' sizes
   (`manifest.json`'s `update`, from `tools/make_release.py --update`).
 - **The steps' numbers** follow the steps the page shows (`game.json`'s `update`).
+- **The movies and the music** (1.0.1): `lib/biks.js` reads Blur's Bink 1 movies, `wasm/bink` (FFmpeg 4.4's Bink
+  decoder) decodes their pictures and the browser's H.265 encoder re-encodes them into rr6-nx's tagged format (the video
+  data of each Bink frame replaced by a tag; the audio packets kept); `lib/audio.js` and `lib/xmop.js` turn the streamed
+  XMA sounds into Opus frames with `wasm/xma`'s decode and the browser's Opus encoder (sasrt-nx-installer's).
 
 The translator (`wasm/renut_hlsl`), uam (`wasm/uam`) and the Python passes (`py/`) are blur-nx's own, so the page's
 shaders are the native build's.
@@ -94,12 +104,12 @@ shaders are the native build's.
 | Test | What it checks |
 |---|---|
 | `node test/full_node.mjs <game> <out.zip> --update=<update package or folder> [--native-glsl=<blur-nx>/out/deko3d_shaders/glsl_opt] [--reference]` | the whole page in Node: the shaders, the packing, the zip; `--native-glsl` compares the GLSL with the native chain's |
-| `python test/check_zip.py <out.zip> <game>` | every file of the zip against the original (the `.lz4b` ones through the decoder) |
+| `python test/check_zip.py <out.zip> <game> <update folder>` | every file of the zip against the original: the LZ4 `.lz4b` ones through the decoder, the ZXC ones through rr6-nx's reader, a re-encoded movie through blur-nx's `bik_hevc_pack.py --check`, the `.xmop` through `test/xmop_check.mjs` |
 | `python test/check_release.py [URL]` | every release file the page fetches against the manifest's SHA-256, as git stores it (what Pages serves) or as `URL` serves it: run it before and after every push (`.gitattributes` keeps `release/` byte for byte) |
 | `node test/stfs_node.mjs <package> <extracted folder>` | `lib/stfs.js` against another tool's extraction, byte for byte |
 | `node test/xmem_node.mjs <dump>` | `lib/xmem.js` against the game's own LZX decodes (blur-nx's `blur_diag_xmem_dump`) |
 | `node test/pak2_probe.mjs <pak>`, `node test/pak2_split.mjs <shader dump> <pak>...` | the PAK2 layout, and where each shader's two parts are |
-| `test/browser.html` (with `python serve.py 8193 . --test-files <game> --test-out <zip>`) | `worker.js` in a browser, with no file dialogs |
+| `test/browser.html` (with `python serve.py 8193 . --test-files <game> --test-packages <update folder> --test-out <zip>`; `?movies=1&audio=1` for the re-encodes, `?compile=0` without the console's shader cache) | `worker.js` in a browser, with no file dialogs |
 
 Outputs of the tests (zips, shader files, dumps) are game data: never commit or share them.
 
