@@ -1,6 +1,6 @@
 # blur-nx-installer
 
-Version 1.0.1, for **blur-nx 1.0.1**: Blur on the Nintendo Switch (homebrew), by ChanseyIsTheBest.
+Version 1.0.2, for **blur-nx 1.0.2**: Blur on the Nintendo Switch (homebrew), by ChanseyIsTheBest.
 
 **Open the page: https://chanseyisthebest.github.io/blur-nx-installer/**
 
@@ -46,6 +46,8 @@ are not uploaded, and none of the game's files come with blur-nx.
 | `switch/blur-nx/game_root/` | the disc's files, and title update 2's `default.xexp` next to `default.xex` |
 | `switch/blur-nx/update/` | title update 2's other files (the game reads them as the console does, from `UPDATE:`) |
 | `switch/blur-nx/README.txt` | the player's guide: the settings, the game menu |
+| `switch/blur-nx/renut/` | your saves, made by the game (`renut/<profile id>/41560845/00000001/AMAXSAVE/`): copy this folder to back them up |
+| `switch/blur-nx/save_backup/` | blur-nx 1.0.2's copy of each save the game wrote (`<profile id>/AMAXSAVE/current`, the one before it in `previous`) |
 
 **Smaller game files** (1.0.1). The level render and physics files are packed with **LZ4 HC level 9 in 256 KB
 blocks** and the level streams with **ZXC in 512 KB blocks** (rr6-nx-installer 1.0.1's packing), as `NAME.lz4b`, which

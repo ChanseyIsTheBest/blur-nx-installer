@@ -30,6 +30,12 @@ sdmc:/switch/blur-nx/game_root/         the disc's files: default.xex and the re
                                         NAME. A plain NAME next to its packed form is read instead, so delete an
                                         older blur-nx's game_root before extracting a new zip.
 sdmc:/switch/blur-nx/update/            title update 2's other files (mounted as UPDATE:, as the console does)
+sdmc:/switch/blur-nx/renut/             your saves: renut/<profile id>/41560845/00000001/AMAXSAVE/savegame (copy the
+                                        whole renut folder to back them up). A save is set aside while the game
+                                        writes it again and put back by itself if the game closes in between.
+sdmc:/switch/blur-nx/save_backup/       a copy of each save the game wrote: <profile id>/AMAXSAVE/current, and the
+                                        one before it in previous. To go back to one, copy its files into the save's
+                                        folder above.
 sdmc:/switch/blur-nx/logs/              logs: none in normal play; logs/rex/rex_crash.log after a crash
 
 Bug reports: add log_level = "info" at the top of blur.toml, play until the problem happens, and include the logs/

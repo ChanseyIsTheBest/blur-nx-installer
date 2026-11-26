@@ -1,11 +1,11 @@
 {
-  "version": "1.0.1",
+  "version": "1.0.2",
   "builds": [
     {
       "edition": "Xbox 360 disc",
       "xex_sha256": "8ad07d3ad05ef451444f63dfca7d93fd92b70127f641b85d82723140f039ac38",
       "nro": "blur-nx.nro",
-      "nro_sha256": "1e3449670be2071ae09d6d16185f7076dc218585622bcf507c3f0de0515c5f50",
+      "nro_sha256": "d8f7595d53e6df2a07670a5ffa94ffd65741f14ffed8adf9a71619e866939554",
       "game_files": {
         "AvatarAssetPack": 14450688,
         "AvatarAwards": 1241088,
@@ -17236,7 +17236,7 @@
         {
           "path": "README.txt",
           "source": "README.txt",
-          "sha256": "d6b35d541ded3755e7e030e7934d2c8eae5e7de12291725e35658579cec69bc8"
+          "sha256": "bcd99b266238c655a4238396d4fcb5af52537233f72064ee8828358d404b6bb0"
         }
       ],
       "deko3d_glsl_sha256": "d031a69a1a27e15617cbe396d7f64e8bf297520ca36abbbe5c0935a9bfef6f2f",
